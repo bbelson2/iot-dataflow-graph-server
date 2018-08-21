@@ -21,7 +21,19 @@
 		"label": "Temperature Source"
 	},
 	{
-		"id":	   "motion-source",
+		"id":	 "motion-source",
 		"label": "Motion Source"
+	},
+	{
+		"id":    "file-source",
+		"label": "File Source"
+	},
+	{
+		"id":    "file-source2",
+		"label": "File Source 2"
+	},
+	{
+		"id":    "joystick-source",
+		"label": "Joystick Source"
 	}
 ]
