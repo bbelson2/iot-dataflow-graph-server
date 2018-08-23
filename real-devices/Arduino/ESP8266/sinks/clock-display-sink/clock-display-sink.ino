@@ -360,15 +360,15 @@ void loop() {
       ssLast = (uint8_t)-1; // Force an update
     }
     modeChanged = true;
-    //Serial.print("modeChanged => ");
-    //Serial.println(uiMode);
+    Serial.print("modeChanged => ");
+    Serial.println(uiMode);
   }
   sw1Last = sw1;
 
   sw2 = digitalRead(SWITCH2_PIN);
   if (!modeChanged && !sw2Last && sw2) {
     hasTimeInput = true;
-    //Serial.println("hasTimeInput");
+    Serial.println("hasTimeInput");
   }
   sw2Last = sw2;
 
@@ -397,10 +397,18 @@ void loop() {
     
     // Use input from button 2 to set clock parts
     if (hasTimeInput) {
+      Serial.print("uiMode=");
+      Serial.print(uiMode);
+      Serial.print("; hh0=");
+      Serial.print(hh0);
+      Serial.print("; mm0=");
+      Serial.print(mm0);
+      Serial.print("; ss0=");
+      Serial.println(ss0);
       switch (uiMode) {
-        case 1: hh0 = (hh + 1) % 24; break;
-        case 2: mm0 = (mm + 1) % 60; break;
-        case 3: ss0 = (ss + 1) % 60; break;
+        case 1: hh0 = (hh0 + 1) % 24; break;
+        case 2: mm0 = (mm0 + 1) % 60; break;
+        case 3: ss0 = (ss0 + 1) % 60; break;
       }
     }
     if (hasTimeInput || (uiMode != uiModeLast)) {
