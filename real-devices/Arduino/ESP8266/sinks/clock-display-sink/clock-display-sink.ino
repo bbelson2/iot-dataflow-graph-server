@@ -70,7 +70,6 @@ const String& NODE_IDENTIFIER = "clock-with-display-sink";
 
 // Setup the ESP8266 Multicast UDP object as a sink
 ESP8266MulticastUDP multicast("iot-dataflow", "it-at-jcu",
-//ESP8266MulticastUDP multicast("UnderTin", "aYdJ49+1",
   IPAddress(224, 0, 0, 115), 9090);
 
 #define ERROR_PIN D8
@@ -133,9 +132,11 @@ void  processComms() {}
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
+// These are the reverse of the constants at Adafruit's documentation 
+// because of big- vs small-endian defaults
 const uint16_t grey = 0x5AEB;
 const uint16_t white = 0xFFFF;
-const uint16_t blue = 0x07E0;
+const uint16_t blue = 0xF800; 
 
 /*
  * Clock display constants and helpers
