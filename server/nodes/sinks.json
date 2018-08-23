@@ -18,5 +18,10 @@
 	{
 		"id":    "fan-sink",
 		"label": "Fan Output"
+	},
+	{
+		"id":    "clock-with-display-sink",
+		"label": "Clock display"
 	}
+	
 ]

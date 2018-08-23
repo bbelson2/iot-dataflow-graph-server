@@ -30,6 +30,8 @@ const String& NODE_IDENTIFIER = "LED-sink";
 
 // On the ESP8266 Full dev board, GPIO12 is a green LED
 unsigned int GREEN_LED = 12;
+// On the Wemos d1 mini, the blue light is D4
+unsigned int BLUE_LED = D4;
 
 #define ERROR_PIN 15
 
@@ -46,6 +48,7 @@ void setup()
 
   //Attempt to connect to the WiFi network
   multicast.begin();
+  Serial.println("");
   Serial.print(NODE_IDENTIFIER);
   if (multicast.isConnected()) {
     multicast.join();
@@ -55,16 +58,23 @@ void setup()
     pinMode(ERROR_PIN, OUTPUT);
     digitalWrite(ERROR_PIN, HIGH);
   }
+
+  digitalWrite(BLUE_LED, LOW);
+  delay(1000); 
+  digitalWrite(BLUE_LED, HIGH);
 }
 
 void performTask(String data) {
+  Serial.println("Processing: " + data);
   int value = data.toInt(); // toInt() returns 0 on invalid format
   if (value > 0) {
     analogWrite(GREEN_LED, 50);
   } else if (data.equals("true")) {
     analogWrite(GREEN_LED, 50);
+    digitalWrite(BLUE_LED, LOW);
   } else {
     analogWrite(GREEN_LED, 0);
+    digitalWrite(BLUE_LED, HIGH);
   }
 }
 
