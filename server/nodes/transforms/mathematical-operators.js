@@ -20,6 +20,12 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 */
+
+function convertToBool(val) {
+	var numericValue = parseFloat(val);
+	return (val === true || val == "true" || (!isNaN(numericValue) && numericValue != 0));
+}
+
 module.exports = [
 	
 	{
@@ -67,6 +73,18 @@ module.exports = [
 		{
 			//Apply the division operator to the upstream values
 			return parseFloat(node.inputValues[0]) / parseFloat(node.inputValues[1]);
+		}
+	},
+	{
+		'id':        'boolean-multiplication-operator',
+		'label':     'Input 1 * boolean 2',
+		'inputs':    2,
+		'validate':  function(node) {},
+		'transform': function(node)
+		{
+			//Apply the multiplication operator to the upstream values
+			var op2 = convertToBool(node.inputValues[1]) ? 1.0 : 0.0;
+			return parseFloat(node.inputValues[0]) * op2;
 		}
 	}
 	
