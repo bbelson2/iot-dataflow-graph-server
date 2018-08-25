@@ -98,11 +98,11 @@ void initComms()
   }  
 }
 void  processComms() {
-  if (multicast.available()) {
-    Serial.println("Reading from WiFi network!");
-    DataPacket packet = multicast.read();
+  DataPacket packet;
+  if (multicast.readWithoutBlock(packet)) {
+    //Serial.println("Reading from WiFi network!");
     String message = packet.data;
-    Serial.println("Got message from WiFi network!");
+    //Serial.println("Got message:" + message);
 
     if (message.startsWith(NODE_IDENTIFIER)) {
       performTask(message.substring(NODE_IDENTIFIER.length() + 1));
@@ -432,10 +432,16 @@ void loop() {
 }
 
 void performTask(String data) {
+  static float theLastValue = -1.0;
   tft.setTextColor(blue);
   
   char buf[20];
   float theValue = data.toFloat();
+  if (theValue == theLastValue) {
+    return; // Optimise display
+  }
+  theLastValue = theValue;
+  
   dtostrf(theValue, 2, 1, buf);
   //strcat(buf, "c");
   uint8_t x = 7;
