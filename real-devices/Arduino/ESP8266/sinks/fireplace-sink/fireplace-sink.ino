@@ -42,6 +42,8 @@ ESP8266MulticastUDP multicast("iot-dataflow", "it-at-jcu",
 
 #define ERROR_PIN 15
 
+void performTask(String data);
+
 void initComms()
 {
   // Use the Red LED to say 'hello'
@@ -268,7 +270,7 @@ protected:
       servoAngle = LIT_ANGLE;
     }
     else if (progress < MS_SPILL_LOWERED) {
-      servoAngle = LIT_ANGLE - 
+      servoAngle = LIT_ANGLE + 
                    (int)(((float)(progress - MS_FIRE_LIT) / (float)(MS_SPILL_LOWERED - MS_FIRE_LIT))
                         * (float)(START_ANGLE - LIT_ANGLE));
     }
@@ -291,6 +293,8 @@ protected:
     if (m_servoAngle == angle) {
       return;
     }
+    Serial.print("servo => ");
+    Serial.println(angle);
     servo.write(angle);
     m_servoAngle = angle;
   }
