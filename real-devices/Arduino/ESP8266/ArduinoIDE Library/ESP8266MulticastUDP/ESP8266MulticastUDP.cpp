@@ -92,10 +92,40 @@ DataPacket ESP8266MulticastUDP::read()
 	}
 }
 
+bool ESP8266MulticastUDP::readWithoutBlock(DataPacket& packet) {
+	int bytesReceived = this->udp.parsePacket();
+	if (bytesReceived > 0)
+	{
+		//Read the payload into our buffer
+		memset(this->buffer, 0, sizeof(this->buffer));
+		this->udp.read(this->buffer, bytesReceived);
+
+		//Prevent buffer overflow
+		if (bytesReceived >= sizeof(this->buffer)) {
+			this->buffer[ sizeof(this->buffer) - 1 ] = 0;
+		}
+
+		//Build and return the data packet
+		packet.data = String((const char*)this->buffer);
+		packet.address = this->udp.remoteIP();
+		packet.port = this->udp.remotePort();
+		return true;
+
+	} else {
+		return false;
+	}
+}
+
 //Attempts to send the specified message on the set multicast address and port
 void ESP8266MulticastUDP::write(const String& information)
 {
 	this->udp.beginPacketMulticast(this->address, this->port, WiFi.localIP());
 	this->udp.write(information.c_str());
 	this->udp.endPacket();
+}
+
+//Returns whether a packet is avalailable to be read, without blocking
+bool ESP8266MulticastUDP::available()
+{
+	return this->udp.available();
 }

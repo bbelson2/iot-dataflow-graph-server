@@ -48,7 +48,10 @@ class ESP8266MulticastUDP
 		bool isConnected();
 
 		DataPacket read();
+		bool readWithoutBlock(DataPacket& packet);
 		void write(const String& information);
+
+		bool available();
 
 	protected:
 		String ssid;
