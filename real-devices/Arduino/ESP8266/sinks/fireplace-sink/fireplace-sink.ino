@@ -72,7 +72,7 @@ void  processComms() {
   if (multicast.readWithoutBlock(packet)) {
     //Serial.println("Reading from WiFi network!");
     String message = packet.data;
-    //Serial.println("Got message:" + message);
+    Serial.println("Got message:" + message);
 
     if (message.startsWith(NODE_IDENTIFIER)) {
       performTask(message.substring(NODE_IDENTIFIER.length() + 1));
@@ -331,12 +331,27 @@ void setup() {
   pinMode(TRIGGER_PIN, INPUT);
   servo.attach(SERVO_PIN);
   
+  //initComms();
+
   fire.begin();
 }
 
+static unsigned long main_timer = 0;
+static int last_main_timer_request = 1;
+
 void loop() {
   fire.run();
-  processComms();  
+  if (main_timer == 0) {
+    main_timer = millis();
+  }
+  else {
+    if (millis() > main_timer) {
+      last_main_timer_request = -last_main_timer_request;
+      changeStateRequest = last_main_timer_request;
+      main_timer = millis() + 10000;
+    }
+  }
+  //processComms();  
 }
 
 // Request change of state
