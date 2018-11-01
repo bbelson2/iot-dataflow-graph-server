@@ -115,12 +115,14 @@ UIEvents.prototype.enableApplyButton = function()
 {
 	$('#processGraph').removeAttr('disabled');
 	$('#processGraph').text('Apply Changes');
+	$('#saveGraph').removeAttr('disabled');
 }
 
 UIEvents.prototype.disableApplyButton = function()
 {
 	$('#processGraph').attr('disabled', 'disabled');
 	$('#processGraph').text('Applying Changes...');
+	$('#saveGraph').attr('disabled', 'disabled');
 }
 
 //Wires up the UI events
@@ -146,7 +148,7 @@ UIEvents.prototype.SetupEvents = function()
 			}, 1000);
 		}
 	});
-	
+
 	//Register the communication error handler
 	this.server.communicationError(function()
 	{
@@ -165,6 +167,13 @@ UIEvents.prototype.SetupEvents = function()
 	//Add the event handler for the status toggle button
 	$('#toggleStatus').click(function() {
 		$('#status').toggle();
+	});
+	
+	//Add the event handler for the save config (S) button
+	$('#saveGraph').click(function() {
+		//alert('Here we tell the server to save the current config');
+		that.disableApplyButton();
+		that.server.sendRequest( that.graph.RebuildGraph(), true );
 	});
 	
 	//Adjust the working area to reflect the new toolbox width

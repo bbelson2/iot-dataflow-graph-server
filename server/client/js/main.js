@@ -40,5 +40,6 @@ jsPlumb.ready(function()
 	
 	//Populate the node menu and wire up the UI events
 	window.uiEvents.PopulateNodeMenu(window.availableNodes);
+	window.graph.ReloadGraph(window.savedConfig);
 	window.uiEvents.SetupEvents();
 });

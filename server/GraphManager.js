@@ -42,7 +42,7 @@ function GraphManager(network)
 	//Read the source and sink JSON files
 	this.sourceNodes = JSON.parse(fs.readFileSync(__dirname + '/nodes/sources.json'));
 	this.sinkNodes   = JSON.parse(fs.readFileSync(__dirname + '/nodes/sinks.json'));
-	
+
 	//Annotate the source and sink nodes with their types
 	this.sourceNodes.forEach(function(node) { node.type = 'source'; });
 	this.sinkNodes.forEach(function(node)   { node.type = 'sink';   });
@@ -135,6 +135,13 @@ GraphManager.prototype.processGraphSubmission = function(graphDetails)
 			node.evaluate = that.transformNodes.functionForNode(node, incomingNodes, outgoingNodes);
 		}
 	});
+
+	// Save to file
+	if (graphDetails.saveConfig) {
+		var dump = JSON.stringify( this.graph );
+		fs.writeFileSync(__dirname + '/configs/network.json', dump);	
+		fs.writeFileSync(__dirname + '/configs/graphdetails.json', JSON.stringify( graphDetails));	
+	}
 }
 
 //Validates that the current flow graph is valid

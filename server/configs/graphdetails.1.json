@@ -1,0 +1,53 @@
+{
+    "vertices": [
+        {
+            "id": "value-source",
+            "label": "Create Value",
+            "fields": {
+                "Value": ""
+            },
+            "type": "source",
+            "bounds": {
+                "x": 401.9444580078125,
+                "y": 1.996527910232544,
+                "w": 286,
+                "h": 119
+            }
+        },
+        {
+            "id": "addition-operator",
+            "label": "Input 1 + Input 2",
+            "inputs": 2,
+            "type": "transform",
+            "bounds": {
+                "x": 987.9861450195312,
+                "y": 177.98611450195312,
+                "w": 156,
+                "h": 67
+            },
+            "inputValues": {}
+        },
+        {
+            "id": "file-source",
+            "label": "File Source",
+            "type": "source",
+            "bounds": {
+                "x": 290.97222900390625,
+                "y": 130.98959350585938,
+                "w": 123,
+                "h": 68
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": 0,
+            "target": 1
+        },
+        {
+            "source": 2,
+            "target": 1
+        }
+    ],
+    "saveConfig": true
+}

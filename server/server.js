@@ -26,6 +26,7 @@ var GraphManager = require('./GraphManager.js');
 var express      = require('express');
 var bodyParser   = require('body-parser')
 var open         = require('open');
+var fs           = require('fs');
 var graph        = new GraphManager();
 var app          = express();
 
@@ -74,6 +75,21 @@ app.post('/apply', function(req, res)
 	//Send the response to the client
 	res.setHeader('Content-Type', 'text/javascript');
 	res.send(JSON.stringify(response));
+});
+
+//Handle requests for the /load endpoint
+app.get('/load', function(req, res)
+{
+	//Load and send the saved network
+	var fileContents = null;
+	try {
+		fileContents = fs.readFileSync(__dirname + '/configs/graphdetails.json');
+	} catch (err) {
+		// Here you get the error when the file was not found,
+		// but you also get any other error
+	}
+	res.setHeader('Content-Type', 'text/javascript');
+	res.send("window.savedConfig = " + fileContents + ";");
 });
 
 //Listen on port 8080

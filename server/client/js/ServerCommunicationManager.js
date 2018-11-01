@@ -35,11 +35,19 @@ ServerCommunicationManager.prototype.communicationError = function(handler) {
 	this.communicationErrorHandler = handler;
 }
 
-ServerCommunicationManager.prototype.sendRequest = function(graph)
+ServerCommunicationManager.prototype.sendRequest = function(graph, saveConfig)
 {
 	//Provides the callbacks with access to this object
 	var that = this;
-	
+
+	//Append any extra data
+	if (saveConfig) {
+		graph.saveConfig = true;
+	}
+	else {
+		graph.saveConfig = false;
+	}
+
 	$.ajax({
 		url:         '/apply',
 		type:        'POST',
@@ -56,3 +64,4 @@ ServerCommunicationManager.prototype.sendRequest = function(graph)
 		}
 	});
 }
+

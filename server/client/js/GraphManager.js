@@ -60,6 +60,13 @@ GraphManager.prototype.RetrieveNodeData = function(node)
 	return ((data !== undefined) ? JSON.parse(data) : {});
 }
 
+GraphManager.prototype.RetrieveNodeDataAndPos = function(node)
+{
+	var data = this.RetrieveNodeData(node);
+	data.bounds = this.ElementBounds(node);
+	return data;
+}
+
 //Creates a node and adds it to the graph
 GraphManager.prototype.CreateNode = function(data, x, y)
 {
@@ -188,6 +195,7 @@ GraphManager.prototype.CreateNode = function(data, x, y)
 			jsPlumb.addEndpoint(node, { anchor: 'Left' }, { isSource: false, isTarget: true });
 		}
 	}
+	return node;
 }
 
 //Sorts connections based on target endpoint location
@@ -228,7 +236,7 @@ GraphManager.prototype.RebuildGraph = function()
 			vertexIndices.push(connection.source);
 			
 			//Retrieve the vertex data payload
-			vertexData.push( that.RetrieveNodeData(connection.source) );
+			vertexData.push( that.RetrieveNodeDataAndPos(connection.source) );
 		}
 		
 		//If the target element is not already in the list of seen vertices, add it
@@ -238,7 +246,7 @@ GraphManager.prototype.RebuildGraph = function()
 			vertexIndices.push(connection.target);
 			
 			//Retrieve the vertex data payload
-			vertexData.push( that.RetrieveNodeData(connection.target) );
+			vertexData.push( that.RetrieveNodeDataAndPos(connection.target) );
 		}
 		
 		//Add the edge
@@ -249,4 +257,55 @@ GraphManager.prototype.RebuildGraph = function()
 		'vertices': vertexData,
 		'edges': edges
 	};
-}
+};
+
+// Reload graph from the data sent by the server in window.savedConfig
+// in response to the GET /load entry-point
+GraphManager.prototype.ReloadGraph = function(graph) {
+	if (!graph) {
+		return;
+	}
+	var that = this;
+	// TODO - clear the current graph 
+	// All x-coords should be offset by the width of the toolbox
+	var container = $('#toolbox');
+	var x_offset = container[0].clientWidth;
+	// Create each node at the saved position
+	var allNodes = [];
+	var inputsAvail = [];
+	var inputsUsed = [];
+	graph.vertices.forEach(function (vertex) {
+		allNodes.push(that.CreateNode(vertex, vertex.bounds.x - x_offset, vertex.bounds.y));
+		inputsAvail.push(vertex.type == 'transform' ? vertex.inputs : 1);
+		inputsUsed.push(0);
+	});
+	// Create each connection
+	graph.edges.forEach(function (edge) {
+		var source = allNodes[edge.source];
+		var target = allNodes[edge.target];
+		// For source nodes the anchor is always the right. 
+		// We need to the know the target anchor.
+		// For transform nodes this may be any of the points at the left.
+		// For sink nodes it is always 'Left'.
+		var inputsCount = inputsAvail[edge.target];
+		var usedCount = inputsUsed[edge.target];
+		var targetAnchor = 'Left';
+		switch (inputsCount) {
+		case 2:
+			targetAnchor = ['TopLeft', 'BottomLeft'][usedCount];
+			break;
+		case 3:
+			targetAnchor = ['TopLeft', 'Left', 'BottomLeft'][usedCount];
+			break;
+		}
+		// Create the connection between the two existing nodes.
+		jsPlumb.connect({ 
+			source: source, 
+			target: target,
+			anchors: ['Right', targetAnchor]
+		});
+		// Make sure that the next time this node is targeted, the connection
+		// point is one further down.
+		inputsUsed[edge.target]++;
+	});
+};
